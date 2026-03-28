@@ -172,7 +172,7 @@ def show_dashboard():
 
     with tab4:
         st.subheader("Secure Payment Gateway")
-        # upi_id = "7217252863@ybl"
+        upi_id = "7217252863@ybl"
         upi_url, qr_img = generate_upi_details(cost)
         
         p1, p2 = st.columns([1, 1.5])
@@ -183,7 +183,7 @@ def show_dashboard():
             # The 'target="_self"' or removing target altogether often works better for mobile deep-linking
             st.markdown(f'''
                 <a href="{upi_url}" class="pay-btn" style="text-decoration: none;">
-                    🚀 LAUNCH UPI APP
+                      LAUNCH UPI APP
                 </a>
             ''', unsafe_allow_html=True)
             
