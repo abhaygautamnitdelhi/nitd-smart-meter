@@ -6,11 +6,9 @@ import numpy as np
 import random
 import io
 import qrcode 
-import requests # Added for REST API calls
+import requests 
 from fpdf import FPDF
 from datetime import datetime
-import time
-import hashlib
 
 # --- 1. CONFIG & TARIFF LOGIC ---
 st.set_page_config(page_title="NITD AI ENERGY METER", layout="wide")
@@ -29,8 +27,8 @@ def calculate_bill(units, state):
 # --- 2. RESEARCH & AUTH HELPERS ---
 def verify_password_via_rest(email, password):
     """Strictly verifies password using Firebase Auth REST API"""
-    # CRITICAL: Replace with your Firebase Web API Key
-    api_key = "0c2dc4f894de607b97ed8fc313bb689fa929b88f" 
+    # NOTE: Ensure this is the 'Web API Key' from Firebase Settings (starts with AIzaSy)
+    api_key = "REPLACE_WITH_YOUR_AIzaSy_KEY" 
     url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={api_key}"
     payload = {"email": email, "password": password, "returnSecureToken": True}
     
@@ -38,6 +36,7 @@ def verify_password_via_rest(email, password):
         response = requests.post(url, json=payload)
         if response.status_code == 200:
             return True, response.json()
+        # Returns specific Firebase error like INVALID_PASSWORD
         return False, response.json().get('error', {}).get('message', 'AUTH_ERROR')
     except Exception as e:
         return False, str(e)
@@ -93,7 +92,7 @@ def apply_custom_style():
         .stApp { background-color: #050505; color: #00d4ff; }
         .neon-hindi { text-align: center; color: #00d4ff; font-size: 3.2rem; font-weight: 900; margin-bottom: 0px; text-shadow: 0 0 10px #00d4ff; }
         .neon-english { text-align: center; color: #00d4ff; font-size: 3.2rem; font-weight: 900; margin-bottom: 0px; text-shadow: 0 0 10px #00d4ff; }
-        .pay-btn { background-color: #00d4ff; color: black !important; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: block; text-align: center; margin: 10px 0; }
+        .pay-btn { background-color: #00d4ff; color: black !important; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: block; text-align: center; margin: 10px 0; border: none; }
         hr { border: 0; height: 1px; background: #00d4ff; margin-bottom: 30px; }
         .chat-msg { background: rgba(0, 212, 255, 0.05); border-left: 3px solid #00d4ff; padding: 10px; margin: 5px 0; }
         </style>
@@ -120,6 +119,12 @@ if not firebase_admin._apps:
 
 def show_dashboard():
     show_institute_header()
+    
+    # Sidebar Logout
+    if st.sidebar.button("Logout 🚪"):
+        st.session_state.logged_in = False
+        st.rerun()
+
     if 'appliances' not in st.session_state: st.session_state.appliances = []
     if 'chat_history' not in st.session_state: st.session_state.chat_history = []
     
@@ -189,15 +194,15 @@ if not st.session_state.logged_in:
         if auth_mode == "Sign Up":
             confirm_pwd = st.text_input("Confirm Password", type="password")
             if st.button("Create Account", use_container_width=True):
-                if pwd == confirm_pwd and len(pwd) >= 6:
+                if email and pwd == confirm_pwd and len(pwd) >= 6:
                     try:
                         auth.create_user(email=email, password=pwd)
-                        st.success("Account Created! Please Login.")
+                        st.success("Account Created! Please switch to Login.")
                     except Exception as e: st.error(str(e))
-                else: st.error("Passwords mismatch or too short.")
+                else: st.error("Passwords mismatch, too short, or empty email.")
         else:
             if st.button("Authorize & Enter", use_container_width=True):
-                # STRICT VERIFICATION
+                # Password Verification via REST
                 success, result = verify_password_via_rest(email, pwd)
                 if success:
                     st.session_state.logged_in = True
