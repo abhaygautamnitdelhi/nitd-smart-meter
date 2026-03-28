@@ -28,7 +28,7 @@ def calculate_bill(units, state):
 def verify_password_via_rest(email, password):
     """Strictly verifies password using Firebase Auth REST API"""
     # NOTE: Ensure this is the 'Web API Key' from Firebase Settings (starts with AIzaSy)
-    api_key = "RAIzaSyDlBe483Ei6sB0lYYEGp6X06T5N64Pxr98" 
+    api_key = "AIzaSyDlBe483Ei6sB0lYYEGp6X06T5N64Pxr98" 
     url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={api_key}"
     payload = {"email": email, "password": password, "returnSecureToken": True}
     
