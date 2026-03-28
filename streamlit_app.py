@@ -30,7 +30,7 @@ def calculate_bill(units, state):
 def verify_password_via_rest(email, password):
     """Strictly verifies password using Firebase Auth REST API"""
     # CRITICAL: Replace with your Firebase Web API Key
-    api_key = "YOUR_FIREBASE_WEB_API_KEY" 
+    api_key = "0c2dc4f894de607b97ed8fc313bb689fa929b88f" 
     url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={api_key}"
     payload = {"email": email, "password": password, "returnSecureToken": True}
     
