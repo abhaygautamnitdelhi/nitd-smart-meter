@@ -28,8 +28,8 @@ def calculate_bill(units, state):
 def verify_password_via_rest(email, password):
     """Strictly verifies password using Firebase Auth REST API"""
     # NOTE: Ensure this is the 'Web API Key' from Firebase Settings (starts with AIzaSy)
-    api_key = "REPLACE_WITH_YOUR_AIzaSy_KEY" 
-    url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={api_key}"
+    api_key = "YEk00tp6Bc9jkKz6PF0WrWzhq3mLIakUI3kRKkHi" 
+    url = f"https://console.firebase.google.com/project/smartenergymeter-d4545/database/smartenergymeter-d4545-default-rtdb/data/~2F"
     payload = {"email": email, "password": password, "returnSecureToken": True}
     
     try:
