@@ -172,7 +172,7 @@ def show_dashboard():
 
     with tab4:
         st.subheader("Secure Payment Gateway")
-        upi_id = "7217252863@ybl"
+        # upi_id = "7217252863@ybl"
         upi_url, qr_img = generate_upi_details(cost)
         
         p1, p2 = st.columns([1, 1.5])
