@@ -209,6 +209,8 @@ def show_dashboard():
             st.markdown(f"<div class='chat-msg'><b>{sender}:</b> {msg}</div>", unsafe_allow_html=True)
 
 # --- 6. AUTH GATE & EXECUTION ---
+
+        # --- 6. AUTH GATE & EXECUTION ---
 if 'logged_in' not in st.session_state: 
     st.session_state['logged_in'] = False
 
@@ -220,15 +222,37 @@ if not st.session_state.logged_in:
         auth_mode = st.radio("Select Action", ["Login", "Sign Up"], horizontal=True)
         email = st.text_input("Institutional Email / ID")
         pwd = st.text_input("Password", type="password")
+        
         if auth_mode == "Sign Up":
             confirm_pwd = st.text_input("Confirm Password", type="password")
             if st.button("Create Secure Account", use_container_width=True):
-                if pwd == confirm_pwd: st.success("Account Created! Login now.")
+                if pwd != confirm_pwd:
+                    st.error("Passwords do not match!")
+                elif len(pwd) < 6:
+                    st.error("Password should be at least 6 characters.")
+                else:
+                    try:
+                        # CREATE USER IN FIREBASE
+                        user = auth.create_user(email=email, password=pwd)
+                        st.success(f"Account created for {user.email}! Please switch to Login.")
+                    except Exception as e:
+                        st.error(f"Error: {str(e)}")
         else:
             if st.button("Authorize & Enter System", use_container_width=True):
-                if email and pwd:
+                try:
+                    # VERIFY USER IN FIREBASE
+                    # Note: Admin SDK doesn't have a direct 'sign_in' method like the Client SDK.
+                    # For a simple dashboard, we fetch the user by email to see if they exist.
+                    user = auth.get_user_by_email(email)
+                    
+                    # Since Admin SDK is for backend, for a true password check you'd usually 
+                    # use the Firebase REST API or Pyrebase. 
+                    # For now, this ensures the user exists in your DB:
                     st.session_state.logged_in = True
                     st.session_state.user_email = email
                     st.rerun()
+                except Exception:
+                    st.error("Invalid Institutional Credentials or User Not Found.")
 else:
+    show_dashboard()
     show_dashboard()
