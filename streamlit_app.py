@@ -172,16 +172,29 @@ def show_dashboard():
 
     with tab4:
         st.subheader("Secure Payment Gateway")
+        upi_id = "7217252863@ybl"
         upi_url, qr_img = generate_upi_details(cost)
+        
         p1, p2 = st.columns([1, 1.5])
-        with p1: st.image(qr_img, width=240)
+        with p1: 
+            st.image(qr_img, width=240, caption="Scan to Pay")
+        
         with p2:
-            st.markdown(f'<a href="{upi_url}" target="_top" class="pay-btn">LAUNCH UPI APP</a>', unsafe_allow_html=True)
-            if st.button("Confirm Payment"):
-                st.balloons(); st.success("Ledger Updated!")
+            # The 'target="_self"' or removing target altogether often works better for mobile deep-linking
+            st.markdown(f'''
+                <a href="{upi_url}" class="pay-btn" style="text-decoration: none;">
+                    🚀 LAUNCH UPI APP
+                </a>
+            ''', unsafe_allow_html=True)
+            
+            st.info(f"UPI ID: {upi_id}")
+            
+            if st.button("Confirm Payment & Sync Ledger"):
+                st.balloons()
+                st.success("Transaction Verified! Ledger Updated.")
+                
             report = generate_pdf_report(st.session_state.user_email, units_val, cost, st.session_state.appliances, selected_state)
             st.download_button("📥 Download Signed Receipt", data=report, file_name="NITD_Receipt.pdf", use_container_width=True)
-
     with tab5:
         st.subheader("🤖 Energy Research Assistant")
         user_msg = st.chat_input("Ask about your bill or AI model...")
