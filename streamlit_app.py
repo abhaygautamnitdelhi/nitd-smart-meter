@@ -187,7 +187,7 @@ def show_dashboard():
                 </a>
             ''', unsafe_allow_html=True)
             
-            st.info(f"UPI ID: {upi_id}")
+            #st.info(f"UPI ID: {upi_id}")
             
             if st.button("Confirm Payment & Sync Ledger"):
                 st.balloons()
